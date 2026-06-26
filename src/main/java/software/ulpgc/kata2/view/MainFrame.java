@@ -25,7 +25,19 @@ public class MainFrame extends JFrame {
     private Component toolbar() {
         JPanel panel = new JPanel();
         panel.add(toggle());
+        panel.add(save());
         return panel;
+    }
+
+    private Component save() {
+        JButton button = new JButton("Save to DB");
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                commands.get("save").execute();
+            }
+        });
+        return button;
     }
 
     private Component toggle() {
