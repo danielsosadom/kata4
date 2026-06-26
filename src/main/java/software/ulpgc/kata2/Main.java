@@ -7,6 +7,7 @@ import software.ulpgc.kata2.model.Champion;
 import software.ulpgc.kata2.model.io.barchart.BarchartLoader;
 import software.ulpgc.kata2.model.io.barchart.MockBarchartLoader;
 import software.ulpgc.kata2.model.io.champion.*;
+import software.ulpgc.kata2.view.ImportDialog;
 import software.ulpgc.kata2.view.MainFrame;
 
 import java.io.File;
@@ -17,18 +18,15 @@ public class Main {
     public static void main(String[] args) {
         try {
             File dataset = new File("League of Legends Champion Stats 12.23.csv");
-
-            List<Champion> champions = new FileChampionReader(dataset,
-                    new CsvChampionDeserializer()
-            ).read();
+            List<Champion> champions = readChampions(dataset);
 
             BarchartLoader loader = new MockBarchartLoader(champions);
 
             MainFrame frame = new MainFrame();
             frame.put("toggle", new ToggleChartCommand(loader, frame.getDisplay()));
             frame.put("save", new WriteChampionsCommand(
-                    new GZIPChampionIterator(dataset, new CsvChampionDeserializer()),
-                    DatabaseChampionWriter.open(new File("movies.db"))
+                    getInput(),
+                    getOutput()
             ));
             frame.getDisplay().show(loader.load(0));
             frame.setVisible(true);
@@ -36,5 +34,19 @@ public class Main {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private static ImportDialog getInput() {
+        return () -> new File("League of Legends Champion Stats 12.13.csv.gz");
+    }
+
+    private static ImportDialog getOutput(){
+        return () -> new File("champions.db");
+    }
+
+    private static List<Champion> readChampions(File dataset) throws IOException {
+        return new FileChampionReader(dataset,
+                new CsvChampionDeserializer()
+        ).read();
     }
 }

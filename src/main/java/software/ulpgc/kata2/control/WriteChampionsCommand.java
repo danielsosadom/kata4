@@ -1,30 +1,33 @@
 package software.ulpgc.kata2.control;
 
 import software.ulpgc.kata2.model.Champion;
-import software.ulpgc.kata2.model.io.champion.ChampionIterator;
-import software.ulpgc.kata2.model.io.champion.ChampionWriter;
+import software.ulpgc.kata2.model.io.champion.*;
+import software.ulpgc.kata2.view.ImportDialog;
 
 import java.io.IOException;
 
 public class WriteChampionsCommand implements Command{
-    private final ChampionIterator iterator;
-    private final ChampionWriter writer;
+    private final ImportDialog input;
+    private final ImportDialog output;
 
-    public WriteChampionsCommand(ChampionIterator iterator, ChampionWriter writer) {
-        this.iterator = iterator;
-        this.writer = writer;
+    public WriteChampionsCommand(ImportDialog input, ImportDialog output) {
+        this.input = input;
+        this.output = output;
     }
+
 
     @Override
     public void execute() {
-        while (true){
-            try {
+        try(GZIPChampionIterator iterator = new GZIPChampionIterator(input.get(),  new CsvChampionDeserializer());
+            DatabaseChampionWriter writer = DatabaseChampionWriter.open(output.get());
+        ) {
+            while(true) {
                 Champion champion = iterator.next();
                 if (champion == null) break;
                 writer.write(champion);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }
