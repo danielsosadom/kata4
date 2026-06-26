@@ -11,14 +11,15 @@ import java.util.Map;
 
 public class MainFrame extends JFrame {
     private final Map<String, Command> commands = new HashMap<>();
-    private final JFreeChartDisplay display = new JFreeChartDisplay();
+    private final JFreeChartDisplay chartDisplay = new JFreeChartDisplay();
+    private final SwingMessageDisplay messageDisplay = new SwingMessageDisplay();
 
     public MainFrame() throws HeadlessException {
         setTitle("Kata 3");
         setSize(800, 600);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        add(display, BorderLayout.CENTER);
+        add(chartDisplay, BorderLayout.CENTER);
         add(toolbar(), BorderLayout.NORTH);
     }
 
@@ -26,6 +27,7 @@ public class MainFrame extends JFrame {
         JPanel panel = new JPanel();
         panel.add(toggle());
         panel.add(save());
+        panel.add(messageDisplay);
         return panel;
     }
 
@@ -55,8 +57,12 @@ public class MainFrame extends JFrame {
         return button;
     }
 
-    public JFreeChartDisplay getDisplay() {
-        return display;
+    public JFreeChartDisplay getChartDisplay() {
+        return chartDisplay;
+    }
+
+    public SwingMessageDisplay getMessageDisplay() {
+        return messageDisplay;
     }
 
     public void put(String key, Command value) {

@@ -30,9 +30,9 @@ public class DatabaseChampionWriter implements ChampionWriter, AutoCloseable{
     }
     private DatabaseChampionWriter(Connection conn) throws SQLException {
         this.conn = conn;
-        prepInsert = conn.prepareStatement(insertChampionStatement);
         stopAutocommit();
         createTables();
+        prepInsert = conn.prepareStatement(insertChampionStatement);
     }
 
     private static final String insertChampionStatement = """
